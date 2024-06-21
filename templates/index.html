@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mt-5">
+  <h1>CIDR Calculator</h1>
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <h3>Convert CIDR to IP Address Range</h3>
+      <form id="cidr-form">
+        <div class="form-group">
+          <label for="cidr">CIDR Notation</label>
+          <input type="text" class="form-control" id="cidr" name="cidr" placeholder="e.g., 192.168.1.0/24 or 2001:db8::/32" required>
+        </div>
+        <button type="submit" class="btn mt-4 btn-primary">Convert</button>
+      </form>
+      <div id="cidr-result" class="mt-4"></div>
+    </div>
+    <div class="col-md-6">
+      <h3>Convert IP Address Range to CIDR</h3>
+      <form id="range-form">
+        <div class="form-group">
+          <label for="start_ip">Start IP Address</label>
+          <input type="text" class="form-control" id="start_ip" name="start_ip" placeholder="e.g., 192.168.1.1" required>
+        </div>
+        <div class="form-group  mt-2">
+          <label for="end_ip">End IP Address</label>
+          <input type="text" class="form-control" id="end_ip" name="end_ip" placeholder="e.g., 192.168.1.254" required>
+        </div>
+        <button type="submit" class="btn mt-4 btn-primary">Convert</button>
+      </form>
+      <div id="range-result" class="mt-4"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('cidr-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const cidr = document.getElementById('cidr').value;
+    fetch('/cidr-to-range', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `cidr=${cidr}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      const resultDiv = document.getElementById('cidr-result');
+      resultDiv.innerHTML = '';
+      if (data.error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+      } else {
+        for (const [key, value] of Object.entries(data)) {
+          resultDiv.innerHTML += `<p><strong>${key}:</strong> ${value}</p>`;
+        }
+      }
+    });
+  });
+
+  document.getElementById('range-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const start_ip = document.getElementById('start_ip').value;
+    const end_ip = document.getElementById('end_ip').value;
+    fetch('/range-to-cidr', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `start_ip=${start_ip}&end_ip=${end_ip}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      const resultDiv = document.getElementById('range-result');
+      resultDiv.innerHTML = '';
+      if (data.error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+      } else {
+        resultDiv.innerHTML = `<p><strong>CIDR notation(s):</strong></p>`;
+        data.result.forEach(cidr => {
+          resultDiv.innerHTML += `<p>${cidr}</p>`;
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}
