@@ -1,5 +1,12 @@
 import ipaddress
 
+def validate_cidr(cidr):
+    try:
+        ipaddress.ip_network(cidr, strict=False)
+        return True
+    except ValueError:
+        return False
+
 def cidr_to_range(cidr):
     try:
         network = ipaddress.ip_network(cidr, strict=False)
@@ -40,12 +47,16 @@ if __name__ == "__main__":
 
     if choice == '1':
         cidr_input = input("Enter CIDR notation (e.g., 192.168.1.0/24): ")
-        result = cidr_to_range(cidr_input)
-        if isinstance(result, str):
-            print(result)
+        
+        if validate_cidr(cidr_input):
+            result = cidr_to_range(cidr_input)
+            if isinstance(result, str):
+                print(result)
+            else:
+                for key, value in result.items():
+                    print(f"{key}: {value}")
         else:
-            for key, value in result.items():
-                print(f"{key}: {value}")
+            print(f"{cidr_input} is not a valid CIDR notation. Please enter a valid CIDR.")
 
     elif choice == '2':
         start_ip = input("Enter the start IP address: ")
