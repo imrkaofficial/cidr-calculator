@@ -24,7 +24,7 @@ def cidr_to_range(cidr):
         "First Host Address": first_host,
         "Last Host Address": last_host,
         "Subnet Mask": network.netmask,
-        "Number of Hosts": network.num_addresses - 2
+        "Number of Hosts": network.num_addresses - 2 if network.num_addresses > 2 else network.num_addresses
     }
 
 def range_to_cidr(start_ip, end_ip):
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     choice = input("Enter choice (1 or 2): ")
 
     if choice == '1':
-        cidr_input = input("Enter CIDR notation (e.g., 192.168.1.0/24): ")
+        cidr_input = input("Enter CIDR notation (e.g., 192.168.1.0/24 or 2001:db8::/32): ")
         
         if validate_cidr(cidr_input):
             result = cidr_to_range(cidr_input)
