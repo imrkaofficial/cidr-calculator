@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import ipaddress
 
@@ -66,4 +67,4 @@ def range_to_cidr_route():
         return jsonify({"result": result})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7000)
+    app.run(debug=True, port=int(os.environ.get('PORT', 7000)))
