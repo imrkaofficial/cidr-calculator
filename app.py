@@ -22,6 +22,14 @@ def cidr_to_range(cidr):
     first_host = network_address + 1
     last_host = broadcast_address - 1
 
+    if network.num_addresses == 1:
+        first_host = network_address
+        last_host = network_address
+    else:
+        first_host = network_address + 1
+        last_host = broadcast_address - 1
+
+
     return {
         "Network Address": str(network_address),
         "Broadcast Address": str(broadcast_address),
